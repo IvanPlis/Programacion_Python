@@ -14,9 +14,11 @@ def leer_camion(nombre_archivo):
     
     camion = []
     f = open(nombre_archivo, 'rt', encoding='utf-8')
+    
+    headers = next(f)
     rows = csv.reader(f)
-    headers = next(rows)
-
+    # Crea un dict contenedor por cada linea del csv y los agrega a la lista
+    # del camion
     for row in rows:
         try:
             mercaderia = dict()
@@ -24,7 +26,7 @@ def leer_camion(nombre_archivo):
             mercaderia['cajones'] = int(row[1])
             mercaderia['precio'] = float(row[2])
             camion.append(mercaderia)
-            print(mercaderia)
+            
         except ValueError:
             print(f'Precio de {row[0]} no encontrado en el archivo')
 
@@ -37,7 +39,6 @@ def precio_camion(camion):
 
     total = 0.0
     for mercaderia in camion:
-        print(mercaderia['cajones'], mercaderia['precio'])
         total += mercaderia['cajones'] * mercaderia['precio']
 
     costo_formateado = f'\nEl costo total es:{total:>10}'
