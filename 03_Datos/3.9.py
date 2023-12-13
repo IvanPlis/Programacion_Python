@@ -22,6 +22,9 @@ def open_camion (archivo):
         for n_row, row in enumerate(rows):
             try:
                 registro = dict(zip(header, row))
+                registro['cajones'] = int(registro['cajones'])
+                registro['precio'] = float(registro['precio'])
+                print(type(registro['precio']))
                 camion.append(registro)
             except ValueError:
                 print(f'Fila {n_row}: No pude interpretar: {row}')
@@ -37,8 +40,8 @@ def print_camion(camion):
 def costo_camion(camion):
     costo_total = 0
     for registro in camion:
-        n_cajas = int(registro['cajones'])
-        precio = float(registro['precio'])
+        n_cajas = registro['cajones']
+        precio = registro['precio']
         costo_total += n_cajas * precio
 
     print(f'El costo total del camion es: {costo_total:>10}')
