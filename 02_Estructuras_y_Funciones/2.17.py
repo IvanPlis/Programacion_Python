@@ -16,7 +16,6 @@ def leer_precios(nombre_archivo):
 
     mercaderia = dict()
     f = open(nombre_archivo, 'rt', encoding='utf-8')
-    headers = next(f)
     rows = csv.reader(f)
 
     for row in rows:

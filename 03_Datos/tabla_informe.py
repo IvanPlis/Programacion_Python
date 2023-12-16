@@ -1,5 +1,6 @@
 import csv
 from pprint import pprint
+from collections import Counter
 import sys
 
 def leer_camion(archivo):
@@ -78,7 +79,7 @@ def hacer_informe(camion, precios):
 
 def imprimir_informe(informe):
     """
-    Imprime el informa con un formato de tabla
+    Imprime el informa con formato de tabla
     """
     
     headers = ('Nombre', 'Cajones', 'Precio', 'Cambio')

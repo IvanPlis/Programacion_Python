@@ -1,5 +1,5 @@
 """
-Modificar open_camion .py para que entienda que la columna tiene el precio
+Modificar leer_camion .py para que entienda que la columna tiene el precio
 por su encabezado y no por su posición dentro del archivo.
 """
 
@@ -7,9 +7,9 @@ import csv
 import pprint
 import sys
 
-def open_camion (archivo):
+def leer_camion(archivo):
     """
-    Abre un csv y guarda una lista (camion) de dicts (mercaderias) con los
+    Lee un csv y guarda una lista (camion) de dicts (mercaderias) con los
     headers como keys
     """
 
@@ -24,7 +24,6 @@ def open_camion (archivo):
                 registro = dict(zip(header, row))
                 registro['cajones'] = int(registro['cajones'])
                 registro['precio'] = float(registro['precio'])
-                print(type(registro['precio']))
                 camion.append(registro)
             except ValueError:
                 print(f'Fila {n_row}: No pude interpretar: {row}')
@@ -52,6 +51,6 @@ if len(sys.argv) == 2:
 else:
     archivo = '../Data/camion.csv'
 
-camion = open_camion (archivo)
+camion = leer_camion(archivo)
 print_camion(camion)
 costo_camion(camion)
