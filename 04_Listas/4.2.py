@@ -1,4 +1,5 @@
 import csv
+import os
 from pprint import pprint
 
 def leer_camion(nombre_archivo):
@@ -14,5 +15,6 @@ def leer_camion(nombre_archivo):
             camion.append(registro)
     return camion
 
+print(os.getcwd())
 camion = leer_camion('../Data/camion.csv')
 pprint(camion)
