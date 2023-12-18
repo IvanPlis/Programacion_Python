@@ -1,3 +1,11 @@
+"""
+Debuggear esto tambien
+
+Falla porque no crea un dict registro independiente en cada
+iteracion, modificando por referencia siempre el mismo dict
+"""
+
+
 import csv
 import os
 from pprint import pprint
