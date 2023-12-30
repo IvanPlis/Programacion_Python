@@ -15,8 +15,6 @@ def leer_parque(nombre_archivo, parque):
         rows = csv.reader(file)
         header = next(rows)
 
-        encontrado = False
-
         for n_row, row in enumerate(rows):
             if parque in row:
                 try:
@@ -32,7 +30,6 @@ def leer_parque(nombre_archivo, parque):
                     arbol['coord_y'] = float(arbol['coord_y'])
                 
                     lista_arboles.append(arbol)
-                    encontrado = True
 
                 except ValueError:
                     print(f'Fila {n_row}: No se pudo interpretar: {row}')
@@ -83,30 +80,52 @@ def informe(lista_arboles):
 
 
 def mostrar_datos_altura(lista_arboles, especie):
+    """
+    Recibe un parque y una especie y muestra la altura maxima y el
+    primedio de las alturas de arboles de dicha especie.
+    """
 
-    lista_altura_especies = obtener_alturas(lista_arboles, especie)
+    alturas = obtener_alturas(lista_arboles, especie)
 
-    if lista_altura_especies:
+    if alturas:
 
-        max_altura = max(lista_altura_especies)
-        prom_altura = round(sum(lista_altura_especies) / len(lista_altura_especies), 2)
+        max_altura = max(alturas)
+        prom_altura = round(sum(alturas) / len(alturas), 2)
         print(f"Altura maxima {especie.upper():>12} {max_altura:>10}")
         print(f"Altura promedio {especie.upper():>10} {prom_altura:>10}")
     
 
 def obtener_alturas(lista_arboles, especie):
+    """
+    Devuelve las alturas de los arboles de una especie en un parque
+    """
 
-    lista_especies = get_especies(lista_arboles)
-    lista_alturas_especies = []
+    arboles_especie = get_arboles_especie(lista_arboles, especie)
+    alturas = []
+    print(arboles_especie)
 
-    if especie in lista_especies:
-        for arbol in lista_arboles:
-            altura_arbol = arbol['altura_tot']
-            lista_alturas_especies.append(altura_arbol)
-    else:
-        print(f'{especie.upper()} no encontrado en parque {lista_arboles[0]["espacio_ve"].upper()}')
+    for arbol in arboles_especie:
+        altura_arbol = arbol['altura_tot']
+        alturas.append(altura_arbol)
 
-    return lista_alturas_especies
+    return alturas
+
+
+def get_arboles_especie (lista_arboles, especie):
+    """
+    Recorre un parque y devuelve los arboles de una especien particular
+    """
+
+    arboles_especie = []
+
+    for arbol in lista_arboles:
+        if especie == arbol['nombre_com']:
+            arboles_especie.append(arbol)
+
+    if arboles_especie is None:
+        print(f'{especie.upper()} no encontrado en parque {lista_arboles[0]["espacio_ve"].upper()}') 
+    
+    return arboles_especie
 
 
 def get_especies(lista_arboles):
@@ -123,6 +142,7 @@ def get_especies(lista_arboles):
             especies.add(nombre_arbol)
     
     return especies
+
 
 
 def contar_ejemplares(lista_arboles):
@@ -143,6 +163,54 @@ def ejemplares_mas_comunes(ejemplares, cant):
     mas_comunes = ejemplares.most_common(cant)
     pprint(mas_comunes)
 
+# A partir de aca se utilizan las técnicas de comprension de listas aprendidas
+# y se aprovecha el hecho de trabajar con objetos
+def leer_arboles(nombre_archivo):
+    """
+    Lee el archivo indicado y devuelva una lista de diccionarios con la
+    información de todos los árboles en el archivo.
+    """
+
+    with open(nombre_archivo, 'rt', encoding='utf-8') as file:
+        rows = csv.reader(file)
+        header = next(rows)
+
+        # Define los tipos de datos de cada columna para su conversion
+        types = [float, float, int, int, int, int, int, str, str, str, str, str, str, str, str, float, float]
+        arboleda = []
+
+        for n_row, row in enumerate(rows):
+            try:
+                # Crea el dict iterando para todos los headers y convirtiendo al type respectivo
+                arbol = {name: func(val) for name, func, val in zip(header, types, row)}
+                arboleda.append(arbol)
+            except ValueError:
+                print(f'Fila {n_row}: No se pudo interpretar: {row}')
+            except IndexError:
+                print(f'Fila vacia en {n_row + 1}')
+
+    return arboleda
+
+
+def obtener_alturas_2(arboleda, especie):
+    """
+    Recibe una lista de arboles y una especie, y devuelve todas las alturas
+    de los arboles de dicha especie.
+    """
+
+    alturas = {arbol['id_arbol']: arbol['altura_tot'] for arbol in arboleda if especie == arbol['nombre_com']}
+    return alturas
+
+
+def obtener_medidas(arboleda, especie):
+    alturas_diam = [(arbol['altura_tot'], arbol['diametro']) for arbol in arboleda if especie == arbol['nombre_com']]
+    return alturas_diam
+
+
+def medidas_de_especie(arboleda, especies): 
+    medidas = {especie: obtener_medidas(arboleda, especie) for especie in especies}
+    return medidas
+
 
 if len(sys.argv) == 2:
     nombre_archivo = sys.argv[1]
@@ -151,12 +219,16 @@ else:
 
 
 lista_arboles_1 = leer_parque(nombre_archivo, 'GENERAL PAZ')
+"""
 lista_arboles_2 = leer_parque(nombre_archivo, 'ANDES, LOS')
 lista_arboles_3 =  leer_parque(nombre_archivo, 'CENTENARIO')
 
 especies = get_especies(lista_arboles_1)
 
+
 ejemplares_1 = contar_ejemplares(lista_arboles_1)
+mostrar_datos_altura(lista_arboles_1, 'Jacarandá')
+
 ejemplares_2 = contar_ejemplares(lista_arboles_2)
 ejemplares_3 = contar_ejemplares(lista_arboles_3)
 
@@ -165,3 +237,18 @@ ejemplares_mas_comunes(ejemplares_2, 5)
 ejemplares_mas_comunes(ejemplares_3, 5)
 
 mostrar_datos_altura(lista_arboles_1, 'Jacarandá')
+"""
+
+
+arboleda = leer_arboles(nombre_archivo)
+"""
+alturas = obtener_alturas_2(arboleda, 'Jacarandá')
+print(alturas)
+
+altura_diam = obtener_medidas(arboleda, 'Jacarandá')
+print(altura_diam)
+"""
+
+especies = ['Eucalipto', 'Palo borracho rosado', 'Jacarandá']
+medidas_especie = medidas_de_especie(arboleda, especies)
+print(medidas_especie)
